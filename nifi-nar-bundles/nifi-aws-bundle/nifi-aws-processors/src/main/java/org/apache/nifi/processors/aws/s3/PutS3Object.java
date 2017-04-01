@@ -205,9 +205,9 @@ public class PutS3Object extends AbstractS3Processor {
             .build();
 
     public static final List<PropertyDescriptor> properties = Collections.unmodifiableList(
-        Arrays.asList(KEY, BUCKET, CONTENT_TYPE, ACCESS_KEY, SECRET_KEY, CREDENTIALS_FILE, AWS_CREDENTIALS_PROVIDER_SERVICE, STORAGE_CLASS, REGION, TIMEOUT, EXPIRATION_RULE_ID,
-            FULL_CONTROL_USER_LIST, READ_USER_LIST, WRITE_USER_LIST, READ_ACL_LIST, WRITE_ACL_LIST, OWNER, CANNED_ACL, SSL_CONTEXT_SERVICE,
-            ENDPOINT_OVERRIDE, SIGNER_OVERRIDE, MULTIPART_THRESHOLD, MULTIPART_PART_SIZE, MULTIPART_S3_AGEOFF_INTERVAL, MULTIPART_S3_MAX_AGE,
+        Arrays.asList(KEY, BUCKET, CONTENT_TYPE, ACCESS_KEY, SECRET_KEY, CREDENTIALS_FILE, AWS_CREDENTIALS_PROVIDER_SERVICE, AWS_CREDENTIALS_PROVIDER_POOL_SERVICE, STORAGE_CLASS,
+            REGION, TIMEOUT, EXPIRATION_RULE_ID, FULL_CONTROL_USER_LIST, READ_USER_LIST, WRITE_USER_LIST, READ_ACL_LIST, WRITE_ACL_LIST, OWNER, CANNED_ACL,
+            SSL_CONTEXT_SERVICE, ENDPOINT_OVERRIDE, SIGNER_OVERRIDE, MULTIPART_THRESHOLD, MULTIPART_PART_SIZE, MULTIPART_S3_AGEOFF_INTERVAL, MULTIPART_S3_MAX_AGE,
             SERVER_SIDE_ENCRYPTION, PROXY_HOST, PROXY_HOST_PORT));
 
     final static String S3_BUCKET_KEY = "s3.bucket";
@@ -393,8 +393,8 @@ public class PutS3Object extends AbstractS3Processor {
         final String key = context.getProperty(KEY).evaluateAttributeExpressions(flowFile).getValue();
         final String cacheKey = getIdentifier() + "/" + bucket + "/" + key;
 
-        final AmazonS3Client s3 = getClient();
         final FlowFile ff = flowFile;
+        final AmazonS3Client s3 = getClient(context, ff);
         final Map<String, String> attributes = new HashMap<>();
         final String ffFilename = ff.getAttributes().get(CoreAttributes.FILENAME.key());
         attributes.put(S3_BUCKET_KEY, bucket);

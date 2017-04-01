@@ -56,7 +56,7 @@ public class DeleteS3Object extends AbstractS3Processor {
             .build();
 
     public static final List<PropertyDescriptor> properties = Collections.unmodifiableList(
-            Arrays.asList(KEY, BUCKET, ACCESS_KEY, SECRET_KEY, CREDENTIALS_FILE, AWS_CREDENTIALS_PROVIDER_SERVICE, REGION, TIMEOUT, VERSION_ID,
+            Arrays.asList(KEY, BUCKET, ACCESS_KEY, SECRET_KEY, CREDENTIALS_FILE, AWS_CREDENTIALS_PROVIDER_SERVICE, AWS_CREDENTIALS_PROVIDER_POOL_SERVICE, REGION, TIMEOUT, VERSION_ID,
                     FULL_CONTROL_USER_LIST, READ_USER_LIST, WRITE_USER_LIST, READ_ACL_LIST, WRITE_ACL_LIST, OWNER,
                     SSL_CONTEXT_SERVICE, ENDPOINT_OVERRIDE, SIGNER_OVERRIDE, PROXY_HOST, PROXY_HOST_PORT));
 
@@ -78,7 +78,7 @@ public class DeleteS3Object extends AbstractS3Processor {
         final String key = context.getProperty(KEY).evaluateAttributeExpressions(flowFile).getValue();
         final String versionId = context.getProperty(VERSION_ID).evaluateAttributeExpressions(flowFile).getValue();
 
-        final AmazonS3 s3 = getClient();
+        final AmazonS3 s3 = getClient(context, flowFile);
 
         // Deletes a key on Amazon S3
         try {
